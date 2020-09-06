@@ -37,6 +37,10 @@ class FileHandler(private val filename: String) {
         }
     }
 
+    fun getFilenameWithoutExt(): String {
+        return "${file.parentFile.absolutePath}/${file.nameWithoutExtension}"
+    }
+
     fun getFilenameWithSVGExt(): String {
         return "${file.parentFile.absolutePath}/${file.nameWithoutExtension}$SVG_EXTENSION"
     }

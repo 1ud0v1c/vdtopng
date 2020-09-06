@@ -11,14 +11,14 @@ To use this program you need to have [Kotlin](https://kotlinlang.org/) & [ImageM
 curl -s https://get.sdkman.io | bash
 sdk install kotlin
 
-# Install ImageMagick Mac OSX, it should already be installed on Linux.
+# Install ImageMagick for Mac OSX, it should already be installed on Linux.
 brew install imagemagick
 ```
 
 ## How to use 
 
-For now, the program is still in development, but you can already generate an SVG and change it's color and size.
-The last step would be to handle the different iOS resolution.
+For now, the program is still in development, but you can already generate a PNG from the vector drawable, change 
+its color, its size and make the export for iOS. If you encounter any problem feel free to submit an issue.
  
 To compile the project, you can use the script **build.sh** or open the project with [IntelliJ IDEA](https://www.jetbrains.com/idea/). 
 

@@ -14,14 +14,21 @@ fun main(args: Array<String>) {
         return
     }
 
+    val programArgs = ProgramArgs(args)
     val fileContents = fileHandler.readFile()
-    val svgContents = vectorDrawableToSVG(fileContents.toMutableList(), ProgramArgs(args))
+    val svgContents = vectorDrawableToSVG(fileContents.toMutableList(), programArgs)
     fileHandler.createSVGFile(svgContents)
 
     if (RuntimeExecutor.isImageMagickPresent()) {
-        val imageMagickCommand = "${RuntimeExecutor.IMAGE_MAGICK_NAME} ${RuntimeExecutor.IMAGE_MAGICK_OPTIONS}"
+        val imageMagickCommand = "${RuntimeExecutor.IMAGE_MAGICK_NAME} ${RuntimeExecutor.IMAGE_MAGICK_BACKGROUND_OPTION}"
         val imageMagickParameters = "${fileHandler.getFilenameWithSVGExt()} ${fileHandler.getFilenameWithPNGExt()}"
-        RuntimeExecutor.execute("$imageMagickCommand $imageMagickParameters")
+        if (RuntimeExecutor.execute("$imageMagickCommand $imageMagickParameters")) {
+            if (programArgs.canExport()) {
+                generateIOSExport(programArgs, fileHandler)
+            }
+        } else {
+            println("An error occurred while executing the ImageMagick command")
+        }
     }
 }
 
@@ -32,7 +39,7 @@ private fun getHelp(): String {
     text += "\tOptions\n"
     text += "-c: permit to change the color of the drawable, use a hexadecimal value, for example: #FF0000.\n"
     text += "-s: permit to change the size of the vector drawable\n"
-    text += "-e: export three different png to support iOS multiple sizes (1x, 1.5x, 2x).\n"
+    text += "-e: export three different png to support iOS multiple sizes (1x, 2x, 3x).\n"
     return text
 }
 
@@ -123,4 +130,14 @@ private fun extractRegex(content: String,
         }
     }
     return null
+}
+
+private fun generateIOSExport(programArgs: ProgramArgs, fileHandler: FileHandler) {
+    val size = Size(programArgs.size!!.width.div(3), programArgs.size!!.height.div(3))
+    for (i in 1 until 4) {
+        val currentCommand = "${RuntimeExecutor.IMAGE_MAGICK_NAME} ${fileHandler.getFilenameWithPNGExt()} " +
+                "${RuntimeExecutor.IMAGE_MAGICK_RESIZE_OPTION} ${size.width * i}x${size.height * i} " +
+                "${fileHandler.getFilenameWithoutExt()}@${i}x.png"
+        RuntimeExecutor.execute(currentCommand)
+    }
 }

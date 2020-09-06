@@ -1,6 +1,7 @@
 object RuntimeExecutor {
     const val IMAGE_MAGICK_NAME = "convert"
-    const val IMAGE_MAGICK_OPTIONS = "-background none"
+    const val IMAGE_MAGICK_BACKGROUND_OPTION = "-background none"
+    const val IMAGE_MAGICK_RESIZE_OPTION = "-resize"
 
     fun isImageMagickPresent(): Boolean {
         val runtime = Runtime.getRuntime()

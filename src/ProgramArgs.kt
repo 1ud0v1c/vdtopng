@@ -2,10 +2,12 @@ class ProgramArgs(args: Array<String>) {
     companion object {
         const val COLOR_OPTION = "-c"
         const val SIZE_OPTION = "-s"
+        const val EXPORT_OPTION = "-e"
     }
 
     var color: String? = null
     var size: Size? = null
+    var needExport: Boolean = false
 
     init {
         if (args.contains(COLOR_OPTION)) {
@@ -38,6 +40,10 @@ class ProgramArgs(args: Array<String>) {
                 println("You need to seize an height and a width.")
             }
         }
+
+        if (args.contains(EXPORT_OPTION)) {
+            needExport = true
+        }
     }
 
     private fun isColorValid(element: String): Boolean {
@@ -55,5 +61,9 @@ class ProgramArgs(args: Array<String>) {
 
     private fun isInteger(element: String): Boolean {
         return element.toIntOrNull()?.let { true } ?: false
+    }
+
+    fun canExport(): Boolean {
+        return size != null && needExport
     }
 }
