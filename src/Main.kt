@@ -1,5 +1,3 @@
-import java.io.File
-
 /**
  * @see https://stackoverflow.com/questions/44948396/convert-vectordrawable-to-svg
  */
@@ -10,15 +8,15 @@ fun main(args: Array<String>) {
     }
 
     val filename = args[0]
-    if (!isFileValid(filename)) {
+    val fileHandler = FileHandler(filename)
+    if (!fileHandler.isFileValidXML()) {
         println("You need to seize a valid vector drawable file.")
         return
     }
 
-    val vectorDrawableFile = File(filename)
-    val fileContents = vectorDrawableFile.readLines()
+    val fileContents = fileHandler.readFile()
     val svgContents = vectorDrawableToSVG(fileContents.toMutableList(), ProgramArgs(args))
-    createSVGFile("${vectorDrawableFile.parentFile.absolutePath}/${vectorDrawableFile.nameWithoutExtension}.svg", svgContents)
+    fileHandler.createSVGFile(svgContents)
 }
 
 private fun getHelp(): String {
@@ -30,17 +28,6 @@ private fun getHelp(): String {
     text += "-s: permit to change the size of the vector drawable\n"
     text += "-e: export three different png to support iOS multiple sizes (1x, 1.5x, 2x).\n"
     return text
-}
-
-private fun isFileValid(filename: String): Boolean {
-    if (!filename.contains(".xml", ignoreCase = true)) {
-        return false
-    }
-    val file = File(filename)
-    if (!file.exists()) {
-        return false
-    }
-    return true
 }
 
 /**
@@ -124,18 +111,4 @@ private fun replaceWithRegex(content: String,
         }
     }
     return null
-}
-
-private fun createSVGFile(filename: String, svgContents: List<String>) {
-    val svgFile = File(filename)
-    if (svgFile.exists()) {
-        svgFile.delete()
-    }
-    for (line in svgContents) {
-        if (svgContents.indexOf(line) != svgContents.size -1) {
-            svgFile.appendText("$line\n")
-        } else {
-            svgFile.appendText(line)
-        }
-    }
 }
