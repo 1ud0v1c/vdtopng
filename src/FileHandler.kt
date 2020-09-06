@@ -4,11 +4,11 @@ class FileHandler(private val filename: String) {
     companion object {
         const val XML_EXTENSION = ".xml"
         const val SVG_EXTENSION = ".svg"
+        const val PNG_EXTENSION = ".png"
     }
-    private lateinit var file: File
+    private var file = File(filename)
 
     fun readFile(): List<String> {
-        file = File(filename)
         return file.readLines()
     }
 
@@ -24,8 +24,7 @@ class FileHandler(private val filename: String) {
     }
 
     fun createSVGFile(contents: List<String>) {
-        val svgFilename = "${file.parentFile.absolutePath}/${file.nameWithoutExtension}$SVG_EXTENSION"
-        val file = File(svgFilename)
+        val file = File(getFilenameWithSVGExt())
         if (file.exists()) {
             file.delete()
         }
@@ -36,5 +35,13 @@ class FileHandler(private val filename: String) {
                 file.appendText(line)
             }
         }
+    }
+
+    fun getFilenameWithSVGExt(): String {
+        return "${file.parentFile.absolutePath}/${file.nameWithoutExtension}$SVG_EXTENSION"
+    }
+
+    fun getFilenameWithPNGExt(): String {
+        return "${file.parentFile.absolutePath}/${file.nameWithoutExtension}$PNG_EXTENSION"
     }
 }

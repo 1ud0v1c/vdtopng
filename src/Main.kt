@@ -17,6 +17,12 @@ fun main(args: Array<String>) {
     val fileContents = fileHandler.readFile()
     val svgContents = vectorDrawableToSVG(fileContents.toMutableList(), ProgramArgs(args))
     fileHandler.createSVGFile(svgContents)
+
+    if (RuntimeExecutor.isImageMagickPresent()) {
+        val imageMagickCommand = "${RuntimeExecutor.IMAGE_MAGICK_NAME} ${RuntimeExecutor.IMAGE_MAGICK_OPTIONS}"
+        val imageMagickParameters = "${fileHandler.getFilenameWithSVGExt()} ${fileHandler.getFilenameWithPNGExt()}"
+        RuntimeExecutor.execute("$imageMagickCommand $imageMagickParameters")
+    }
 }
 
 private fun getHelp(): String {
