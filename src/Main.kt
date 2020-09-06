@@ -31,7 +31,7 @@ private fun getHelp(): String {
 }
 
 /**
- * Format an Android vector drawable to a SVG
+ * Format an Android vector drawable to an SVG
  */
 private fun vectorDrawableToSVG(vectorDrawable: MutableList<String>,
                                 options: ProgramArgs): List<String> {
@@ -51,21 +51,27 @@ private fun vectorDrawableToSVG(vectorDrawable: MutableList<String>,
 
         // Handle color attribute
         options.color?.let { color ->
-            replaceWithRegex(line, "android:fillColor=\"#[0-9A-Fa-f]{6,8}\"(.*)".toRegex())?.let {
+            extractRegex(line, "android:fillColor=\"#[0-9A-Fa-f]{6,8}\"(.*)".toRegex())?.let {
                 vectorDrawable[index] = "\t\tfill=\"$color\"$it"
             }
         }
 
         // Handle width & height attributes
-        replaceWithRegex(line, "android:width=\"([0-9]+)dp\"".toRegex())?.let {
+        extractRegex(line, "android:width=\"([0-9]+)dp\"".toRegex())?.let {
             vectorDrawable[index] = "\t\twidth=\"$it\""
+            options.size?.let { size ->
+                vectorDrawable[index] = "\t\twidth=\"${size.width}\""
+            }
         }
-        replaceWithRegex(line, "android:height=\"([0-9]+)dp\"".toRegex())?.let {
+        extractRegex(line, "android:height=\"([0-9]+)dp\"".toRegex())?.let {
             vectorDrawable[index] = "\t\theight=\"$it\""
+            options.size?.let { size ->
+                vectorDrawable[index] = "\t\theight=\"${size.height}\""
+            }
         }
 
         // Handle viewBox attribute
-        replaceWithRegex(line, "android:viewportWidth=\"([0-9]+)\"".toRegex())?.let { viewportWidth ->
+        extractRegex(line, "android:viewportWidth=\"([0-9]+)\"".toRegex())?.let { viewportWidth ->
             viewBoxWith = viewportWidth
             if (viewBoxHeight != null) {
                 vectorDrawable[index] = "\t\tviewBox=\"0 0 $viewBoxWith $viewBoxHeight\">"
@@ -73,7 +79,7 @@ private fun vectorDrawableToSVG(vectorDrawable: MutableList<String>,
                 indexNeedDeletion = index
             }
         }
-        replaceWithRegex(line, "android:viewportHeight=\"([0-9]+)\"".toRegex())?.let { viewportHeight ->
+        extractRegex(line, "android:viewportHeight=\"([0-9]+)\"".toRegex())?.let { viewportHeight ->
             viewBoxHeight = viewportHeight
             if (viewBoxWith != null) {
                 vectorDrawable[index] = "\t\tviewBox=\"0 0 $viewBoxWith $viewBoxHeight\">"
@@ -102,8 +108,8 @@ private fun buildMapAttributes(options: ProgramArgs): MutableMap<String, String>
     return vectorDrawableToSVGAttributes
 }
 
-private fun replaceWithRegex(content: String,
-                             regex: Regex): String? {
+private fun extractRegex(content: String,
+                         regex: Regex): String? {
     val matchHeight = regex.find(content)
     matchHeight?.groupValues?.let { results ->
         if (results.isNotEmpty() && results.size > 1) {
