@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
 
     val vectorDrawableFile = File(filename)
     val fileContents = vectorDrawableFile.readLines()
-    val svgContents = vectorDrawableToSVG(fileContents.toMutableList())
+    val svgContents = vectorDrawableToSVG(fileContents.toMutableList(), ProgramArgs(args))
     createSVGFile("${vectorDrawableFile.parentFile.absolutePath}/${vectorDrawableFile.nameWithoutExtension}.svg", svgContents)
 }
 
@@ -46,19 +46,12 @@ private fun isFileValid(filename: String): Boolean {
 /**
  * Format an Android vector drawable to a SVG
  */
-private fun vectorDrawableToSVG(vectorDrawable: MutableList<String>): List<String> {
-    val vectorDrawableToSVGAttributes = mapOf(
-            "<vector xmlns:android=\"http://schemas.android.com/apk/res/android\"" to "<svg xmlns=\"http://www.w3.org/2000/svg\"",
-            "android:pathData" to "d",
-            "android:fillColor" to "fill",
-            "android:strokeColor" to "stroke",
-            "android:strokeWidth" to "stroke-width",
-            "android:fillType" to "fill-rule",
-            "</vector>" to "</svg>"
-    )
+private fun vectorDrawableToSVG(vectorDrawable: MutableList<String>,
+                                options: ProgramArgs): List<String> {
     var viewBoxWith: String? = null
     var viewBoxHeight: String? = null
     var indexNeedDeletion: Int? = null
+    val vectorDrawableToSVGAttributes = buildMapAttributes(options)
 
     vectorDrawable.forEachIndexed { index, line ->
         // Update vector drawables properties
@@ -66,6 +59,13 @@ private fun vectorDrawableToSVG(vectorDrawable: MutableList<String>): List<Strin
             if (line.contains(androidName)) {
                 val newLine = line.replace(androidName, svgName)
                 vectorDrawable[index] = newLine
+            }
+        }
+
+        // Handle color attribute
+        options.color?.let { color ->
+            replaceWithRegex(line, "android:fillColor=\"#[0-9A-Fa-f]{6,8}\"(.*)".toRegex())?.let {
+                vectorDrawable[index] = "\t\tfill=\"$color\"$it"
             }
         }
 
@@ -100,6 +100,19 @@ private fun vectorDrawableToSVG(vectorDrawable: MutableList<String>): List<Strin
     }
 
     return vectorDrawable
+}
+
+private fun buildMapAttributes(options: ProgramArgs): MutableMap<String, String> {
+    val vectorDrawableToSVGAttributes = mutableMapOf(
+            "<vector xmlns:android=\"http://schemas.android.com/apk/res/android\"" to "<svg xmlns=\"http://www.w3.org/2000/svg\"",
+            "android:pathData" to "d",
+            "android:fillType" to "fill-rule",
+            "</vector>" to "</svg>"
+    )
+    if (options.color == null) {
+        vectorDrawableToSVGAttributes["android:fillColor"] = "fill"
+    }
+    return vectorDrawableToSVGAttributes
 }
 
 private fun replaceWithRegex(content: String,
