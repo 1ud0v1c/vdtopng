@@ -15,11 +15,16 @@ sdk install kotlin
 brew install imagemagick
 ```
 
+:warning: I encounter an issue on the last version of Mac OSX, it seems [the rsvg library](https://en.wikipedia.org/wiki/Librsvg) 
+is no longer supported in the last version of ImageMagick (installed from [homebrew](https://brew.sh/)), I am looking for a 
+preferable solution, but if you want, you can use [an older version](https://stackoverflow.com/a/55637475) for now. If you 
+don't use this version, you will have artefacts on your png.
+
 ## How to use 
 
 For now, the program is still in development, but you can already generate a PNG from the vector drawable, change 
 its color, its size and make the export for iOS. If you encounter any problem feel free to submit an issue.
- 
+
 To compile the project, you can use the script **build.sh** or open the project with [IntelliJ IDEA](https://www.jetbrains.com/idea/). 
 
 Here is a little example of how to use the script : 
