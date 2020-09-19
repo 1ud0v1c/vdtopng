@@ -1,3 +1,5 @@
+package os
+
 object RuntimeExecutor {
     const val IMAGE_MAGICK_NAME = "convert"
     const val IMAGE_MAGICK_BACKGROUND_OPTION = "-background none"

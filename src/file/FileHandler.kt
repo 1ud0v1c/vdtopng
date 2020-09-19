@@ -1,10 +1,10 @@
+package file
+
 import java.io.File
 
 class FileHandler(private val filename: String) {
     companion object {
-        const val XML_EXTENSION = ".xml"
-        const val SVG_EXTENSION = ".svg"
-        const val PNG_EXTENSION = ".png"
+
     }
     private var file = File(filename)
 
@@ -13,7 +13,7 @@ class FileHandler(private val filename: String) {
     }
 
     fun isFileValidXML(): Boolean {
-        if (!filename.contains(XML_EXTENSION, ignoreCase = true)) {
+        if (!filename.contains(FileExtension.XML, ignoreCase = true)) {
             return false
         }
         val file = File(filename)
@@ -42,10 +42,10 @@ class FileHandler(private val filename: String) {
     }
 
     fun getFilenameWithSVGExt(): String {
-        return "${file.parentFile.absolutePath}/${file.nameWithoutExtension}$SVG_EXTENSION"
+        return "${file.parentFile.absolutePath}/${file.nameWithoutExtension}${FileExtension.SVG}"
     }
 
     fun getFilenameWithPNGExt(): String {
-        return "${file.parentFile.absolutePath}/${file.nameWithoutExtension}$PNG_EXTENSION"
+        return "${file.parentFile.absolutePath}/${file.nameWithoutExtension}${FileExtension.PNG}"
     }
 }

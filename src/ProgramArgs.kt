@@ -1,3 +1,5 @@
+import common.Size
+
 class ProgramArgs(args: Array<String>) {
     companion object {
         const val COLOR_OPTION = "-c"
