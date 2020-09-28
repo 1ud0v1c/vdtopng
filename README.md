@@ -23,14 +23,15 @@ don't use this version, you will have artefacts on your png.
 ## How to use 
 
 For now, the program is still in development, but you can already generate a PNG from the vector drawable, change 
-its color, its size and make the export for iOS. If you encounter any problem feel free to submit an issue.
+its color, its size and make the export for iOS. If you encounter any problem feel free to submit an issue, or a pull request.
+Take note, that the vector drawable you will give need to be well formatted. It means, one instruction per line.  
 
 To compile the project, you can use the script **build.sh** or open the project with [IntelliJ IDEA](https://www.jetbrains.com/idea/). 
 
 Here is a little example of how to use the script : 
 
 ```
-./build.sh "data/ic_android.xml -c #F55600 -s 1200 1200"
+./build.sh "data/ic_android.xml -c #F55600 -s 1200 1200 -e ios"
 ```
 
 Il will generate an SVG & a png file inside the same folder than the vector drawable.
