@@ -1,5 +1,7 @@
-import converter.VectorDrawableConverter
+import export.Export
 import export.IOSExport
+import export.PNGExport
+import export.SVGExport
 import file.FileHandler
 import os.RuntimeExecutor
 
@@ -20,14 +22,11 @@ fun main(args: Array<String>) {
     }
 
     val programArgs = ProgramArgs(args)
-    val fileContents = fileHandler.readFile()
-    val svgConverter = VectorDrawableConverter(fileContents.toMutableList(), programArgs)
-    val svgContents = svgConverter.convertToSVG()
-    fileHandler.createSVGFile(svgContents)
-
+    val exporters = buildExportersList()
     if (RuntimeExecutor.isImageMagickPresent()) {
-        val iOSExport = IOSExport(fileHandler, programArgs)
-        iOSExport.export()
+        for (exporter in exporters) {
+            exporter.export(programArgs, fileHandler)
+        }
     }
 }
 
@@ -37,7 +36,15 @@ private fun getHelp(): String {
     text += "./vdtopng file.xml\n\n"
     text += "\tOptions\n"
     text += "-c: permit to change the color of the drawable, use a hexadecimal value, for example: #FF0000.\n"
-    text += "-s: permit to change the size of the vector drawable\n"
-    text += "-e: export three different png to support iOS multiple sizes (1x, 2x, 3x).\n"
+    text += "-s: permit to change the size of the vector drawable, precise the width and height: 1200 1200.\n"
+    text += "-e: allow to export the xml file to support iOS multiple format (1x, 2x, 3x): ios.\n"
     return text
+}
+
+private fun buildExportersList(): ArrayList<Export> {
+    val exporters = ArrayList<Export>()
+    exporters.add(SVGExport())
+    exporters.add(PNGExport())
+    exporters.add(IOSExport())
+    return exporters
 }

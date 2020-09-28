@@ -7,9 +7,11 @@ class ProgramArgs(args: Array<String>) {
         const val EXPORT_OPTION = "-e"
     }
 
-    var color: String? = null
+    private val supportedExports = arrayOf( "ios" )
+    private var isIOSExportNeeded: Boolean = false
+
     var size: Size? = null
-    var needExport: Boolean = false
+    var color: String? = null
 
     init {
         if (args.contains(COLOR_OPTION)) {
@@ -44,7 +46,18 @@ class ProgramArgs(args: Array<String>) {
         }
 
         if (args.contains(EXPORT_OPTION)) {
-            needExport = true
+            val exportIndex = args.indexOf(EXPORT_OPTION) + 1
+            if (exportIndex < args.size) {
+                val wantedExport = args[exportIndex].toLowerCase()
+                if (supportedExports.contains(wantedExport)) {
+                    isIOSExportNeeded = true
+                } else {
+                    val supportedExportOption = "[ ${supportedExports.joinToString(", ")} ]"
+                    println("You need to seize a valid export options, currently supported: $supportedExportOption.")
+                }
+            } else {
+                println("You need to seize a wanted export.")
+            }
         }
     }
 
@@ -65,7 +78,7 @@ class ProgramArgs(args: Array<String>) {
         return element.toIntOrNull()?.let { true } ?: false
     }
 
-    fun canExport(): Boolean {
-        return size != null && needExport
+    fun canMakeIOSExport(): Boolean {
+        return size != null && isIOSExportNeeded
     }
 }

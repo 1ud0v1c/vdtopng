@@ -3,9 +3,6 @@ package file
 import java.io.File
 
 class FileHandler(private val filename: String) {
-    companion object {
-
-    }
     private var file = File(filename)
 
     fun readFile(): List<String> {
